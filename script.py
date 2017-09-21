@@ -24,12 +24,12 @@ def main():
         return 1
 
     if not os.path.exists(args.pathToSave):
-        print "Path to save not exists :", args.pathToSave
-        return 1
+        # print "Path to save not exists :", args.pathToSave
+        os.mkdir(args.pathToSave)
 
-    if not os.path.exists(args.pathToInfo):
-        print "Path to save not exists :", args.pathToInfo
-        return 1
+    if not args.pathToInfo:
+        print "Not specified file for utterance info. -i", args.pathToInfo
+
 
     file_info = codecs.open(args.pathToInfo,'w', encoding='utf8')
 
@@ -41,19 +41,13 @@ def main():
     dict = {} # id:rawPath
     for child in rootNode.iter('AudioRoot'):
         dict[child.attrib['id']] = child.attrib['rawPath']
-        # print child.tag, child.attrib['id'], child.attrib['rawPath']
 
 
-    files_name = []
     for child in rootNode.iter('Utt'):
-        # print child.attrib['audioRoot'],  child.attrib['audio']
-        # print "path=%s%s" %  (dict[child.attrib['audioRoot']], child.attrib['audio'])
-        # print "cp %s%s %s" %  (dict[child.attrib['audioRoot']], child.attrib['audio'], args.pathToSave)
-        os.system("cp %s%s %s" %  (dict[child.attrib['audioRoot']], child.attrib['audio'], args.pathToSave))
-        confidence = int(child.attrib['conf']) / 1000
-        file_info.write('%s;%s;%s;%d\n' % (child.attrib['audio'], child.attrib['rawText'], child.attrib['recValue'], confidence))
-        # os.system("cp %s%s %s" %  (dict[child.attrib['audioRoot']], child.attrib['audio'], args.pathToSave))
-        # file_info.write()
+        if child.attrib['transcribe'] == 'yes':
+            os.system("cp %s%s %s" %  (dict[child.attrib['audioRoot']], child.attrib['audio'], args.pathToSave))
+            confidence = (int(child.attrib['conf']) + 0.0) / 1000
+            file_info.write('%s;%s;%s;%d\n' % (child.attrib['audio'], child.attrib['rawText'], child.attrib['recValue'], confidence))
 
 if __name__ == '__main__':
     main()
