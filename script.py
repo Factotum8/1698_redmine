@@ -47,7 +47,7 @@ def main():
         if child.attrib['transcribe'] == 'yes':
             os.system("cp %s%s %s" %  (dict[child.attrib['audioRoot']], child.attrib['audio'], args.pathToSave))
             confidence = (int(child.attrib['conf']) + 0.0) / 1000
-            file_info.write('%s;%s;%s;%d\n' % (child.attrib['audio'], child.attrib['rawText'], child.attrib['recValue'], confidence))
+            file_info.write('%s;%s;%s;%f\n' % (child.attrib['audio'], child.attrib['rawText'], child.attrib['recValue'], confidence))
 
 if __name__ == '__main__':
     main()
